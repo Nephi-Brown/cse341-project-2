@@ -25,7 +25,7 @@
         }
       }
     },
-    "/books/": {
+    "/api-docs": {
       "get": {
         "description": "",
         "responses": {
@@ -33,19 +33,91 @@
             "description": ""
           }
         }
+      }
+    },
+    "/books/": {
+      "get": {
+        "tags": [
+          "Books"
+        ],
+        "description": "",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
       },
       "post": {
+        "tags": [
+          "Books"
+        ],
         "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "example": "any"
+                },
+                "author": {
+                  "example": "any"
+                },
+                "isbn": {
+                  "example": "any"
+                },
+                "genre": {
+                  "example": "any"
+                },
+                "status": {
+                  "example": "any"
+                },
+                "rating": {
+                  "example": "any"
+                },
+                "startDate": {
+                  "example": "any"
+                },
+                "finishDate": {
+                  "example": "any"
+                },
+                "tags": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
         "responses": {
+          "201": {
+            "description": "Created"
+          },
           "400": {
             "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
     },
     "/books/{id}": {
       "get": {
+        "tags": [
+          "Books"
+        ],
         "description": "",
+        "produces": [
+          "application/json"
+        ],
         "parameters": [
           {
             "name": "id",
@@ -55,12 +127,24 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       },
       "put": {
+        "tags": [
+          "Books"
+        ],
         "description": "",
         "parameters": [
           {
@@ -68,15 +152,63 @@
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "example": "any"
+                },
+                "author": {
+                  "example": "any"
+                },
+                "isbn": {
+                  "example": "any"
+                },
+                "genre": {
+                  "example": "any"
+                },
+                "status": {
+                  "example": "any"
+                },
+                "rating": {
+                  "example": "any"
+                },
+                "startDate": {
+                  "example": "any"
+                },
+                "finishDate": {
+                  "example": "any"
+                },
+                "tags": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
+          "204": {
+            "description": "No Content"
+          },
           "400": {
             "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       },
       "delete": {
+        "tags": [
+          "Books"
+        ],
         "description": "",
         "parameters": [
           {
@@ -87,33 +219,92 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
     },
     "/notes/": {
       "get": {
+        "tags": [
+          "Notes"
+        ],
         "description": "",
+        "produces": [
+          "application/json"
+        ],
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       },
       "post": {
+        "tags": [
+          "Notes"
+        ],
         "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "bookId": {
+                  "example": "any"
+                },
+                "page": {
+                  "example": "any"
+                },
+                "quote": {
+                  "example": "any"
+                },
+                "note": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
         "responses": {
+          "201": {
+            "description": "Created"
+          },
           "400": {
             "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
     },
     "/notes/{id}": {
       "get": {
+        "tags": [
+          "Notes"
+        ],
         "description": "",
+        "produces": [
+          "application/json"
+        ],
         "parameters": [
           {
             "name": "id",
@@ -123,12 +314,24 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       },
       "put": {
+        "tags": [
+          "Notes"
+        ],
         "description": "",
         "parameters": [
           {
@@ -136,15 +339,48 @@
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "bookId": {
+                  "example": "any"
+                },
+                "page": {
+                  "example": "any"
+                },
+                "quote": {
+                  "example": "any"
+                },
+                "note": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
+          "204": {
+            "description": "No Content"
+          },
           "400": {
             "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       },
       "delete": {
+        "tags": [
+          "Notes"
+        ],
         "description": "",
         "parameters": [
           {
@@ -155,8 +391,17 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }

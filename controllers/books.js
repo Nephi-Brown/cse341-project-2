@@ -4,6 +4,20 @@ const { ObjectId } = require('mongodb');
 
 const isValidObjectId = (id) => ObjectId.isValid(id);
 
+// Helper: only save finishDate if it's not NA/empty
+const normalizeFinishDate = (finishDate) => {
+  if (finishDate === undefined || finishDate === null) return undefined;
+
+  // Handle strings like "NA", "na", "N/A", "", "   "
+  if (typeof finishDate === 'string') {
+    const cleaned = finishDate.trim().toLowerCase();
+    if (cleaned === '' || cleaned === 'na' || cleaned === 'n/a') return undefined;
+    return finishDate.trim();
+  }
+
+  return finishDate;
+};
+
 const getAll = async (req, res) => {
   // #swagger.tags = ['Books']
   try {
@@ -37,7 +51,10 @@ const getSingle = async (req, res) => {
 const createBook = async (req, res) => {
   // #swagger.tags = ['Books']
   try {
-    // Body already validated by middleware
+    // Body is validated by validate.js middleware in routes/books.js
+
+    const finishDate = normalizeFinishDate(req.body.finishDate);
+
     const book = {
       title: req.body.title,
       author: req.body.author,
@@ -46,11 +63,15 @@ const createBook = async (req, res) => {
       status: req.body.status,
       rating: req.body.rating,
       startDate: req.body.startDate,
-      finishDate: req.body.finishDate,
       tags: req.body.tags
     };
 
-    // Optional business rule
+    // ✅ Only store finishDate if it is valid
+    if (finishDate !== undefined) {
+      book.finishDate = finishDate;
+    }
+
+    // Business rule: rating only allowed when finished
     if (book.rating && book.status !== 'finished') {
       return res.status(400).json({ error: 'Rating is only allowed when status is "finished".' });
     }
@@ -73,8 +94,11 @@ const updateBook = async (req, res) => {
     const { id } = req.params;
     if (!isValidObjectId(id)) return res.status(400).json({ error: 'Invalid book id.' });
 
-    // Body already validated by middleware
+    // Body is validated by validate.js middleware in routes/books.js
+
+    const finishDate = normalizeFinishDate(req.body.finishDate);
     const bookId = new ObjectId(id);
+
     const book = {
       title: req.body.title,
       author: req.body.author,
@@ -83,10 +107,15 @@ const updateBook = async (req, res) => {
       status: req.body.status,
       rating: req.body.rating,
       startDate: req.body.startDate,
-      finishDate: req.body.finishDate,
       tags: req.body.tags
     };
 
+    // ✅ Only store finishDate if it is valid
+    if (finishDate !== undefined) {
+      book.finishDate = finishDate;
+    }
+
+    // Business rule: rating only allowed when finished
     if (book.rating && book.status !== 'finished') {
       return res.status(400).json({ error: 'Rating is only allowed when status is "finished".' });
     }
@@ -112,7 +141,7 @@ const deleteBook = async (req, res) => {
 
     const bookId = new ObjectId(id);
 
-    // Optional: delete related notes too (helps keep DB clean)
+    // Optional: remove related notes
     await mongodb.getDatabase().db().collection('notes').deleteMany({ bookId });
 
     const response = await mongodb.getDatabase().db().collection('books').deleteOne({ _id: bookId });
