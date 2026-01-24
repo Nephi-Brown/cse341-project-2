@@ -1,0 +1,29 @@
+{
+  "name": "cse341-project-2",
+  "version": "1.0.0",
+  "description": "My Seconf Project",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nephi-Brown/cse341-project-2.git"
+  },
+  "author": "Nephi Brown",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Nephi-Brown/cse341-project-2/issues"
+  },
+  "homepage": "https://github.com/Nephi-Brown/cse341-project-2#readme",
+  "dependencies": {
+    "body-parser": "^2.2.2",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "mongodb": "^7.0.0",
+    "swagger-autogen": "^2.23.7",
+    "swagger-ui-express": "^5.0.1",
+    "validatorjs": "^3.22.1"
+  }
+}
