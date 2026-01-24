@@ -5,7 +5,7 @@
     "description": "Books and Notes CRUD API",
     "version": "1.0.0"
   },
-  "host": "localhost:3000",
+  "host": "cse341-project-2-dkb3.onrender.com",
   "basePath": "/",
   "schemes": [
     "https"
