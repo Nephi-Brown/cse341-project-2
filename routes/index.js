@@ -1,4 +1,4 @@
-// routes/index.js
+
 const router = require('express').Router();
 
 router.use('/', require('./swagger'));
@@ -8,9 +8,7 @@ router.get('/', (req, res) => {
   res.send('Hello World');
 });
 
-router.use('/auth', require('./auth')); // NEW
-
-router.use('/users', require('./users'));
+router.use('/auth', require('./auth')); 
 router.use('/books', require('./books'));
 router.use('/notes', require('./notes'));
 
