@@ -1,9 +1,9 @@
-// routes/notes.js
 const express = require('express');
 const router = express.Router();
 
 const notesController = require('../controllers/notes');
 const validate = require('../middleware/validate');
+const { ensureAuth } = require('../middleware/auth');
 
 const noteRules = {
   bookId: 'required|string',
@@ -15,9 +15,8 @@ const noteRules = {
 router.get('/', notesController.getAll);
 router.get('/:id', notesController.getSingle);
 
-router.post('/', validate(noteRules), notesController.createNote);
-router.put('/:id', validate(noteRules), notesController.updateNote);
-
-router.delete('/:id', notesController.deleteNote);
+router.post('/', ensureAuth, validate(noteRules), notesController.createNote);
+router.put('/:id', ensureAuth, validate(noteRules), notesController.updateNote);
+router.delete('/:id', ensureAuth, notesController.deleteNote);
 
 module.exports = router;
