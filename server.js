@@ -12,17 +12,33 @@ const configurePassport = require('./config/passport');
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Render is behind a proxy (HTTPS terminates before Node)
 app.set('trust proxy', 1);
 
 app.use(bodyParser.json());
 
+// IMPORTANT: use a dedicated session secret (NOT your GitHub client secret)
+if (!process.env.SESSION_SECRET) {
+  console.warn(
+    '⚠️ SESSION_SECRET is not set. Set it in Render env vars for production. Using a dev fallback is insecure.'
+  );
+}
+
 app.use(
   session({
-    secret: process.env.GITHUB_CLIENT_SECRET || 'dev_secret_change_me',
+    name: 'sid',
+    secret: process.env.SESSION_SECRET || 'dev_secret_change_me',
     resave: false,
     saveUninitialized: false,
+    proxy: true, // helps when behind reverse proxies
     cookie: {
-      secure: false 
+      httpOnly: true,
+      // On Render (HTTPS) this should be true in production, or cookies may not persist reliably.
+      secure: process.env.NODE_ENV === 'production',
+      // OAuth callback is a top-level navigation; 'lax' is ideal for this.
+      sameSite: 'lax',
+      // Optional: 7 days
+      maxAge: 1000 * 60 * 60 * 24 * 7
     }
   })
 );

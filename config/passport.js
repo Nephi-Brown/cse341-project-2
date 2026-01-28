@@ -1,6 +1,8 @@
+// config/passport.js
 const passport = require('passport');
 const GitHubStrategy = require('passport-github2').Strategy;
 const mongodb = require('../data/database');
+const { ObjectId } = require('mongodb');
 
 const ensureEnv = () => {
   const required = ['GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET', 'GITHUB_CALLBACK_URL'];
@@ -24,11 +26,13 @@ const configurePassport = () => {
         try {
           const db = mongodb.getDatabase().db();
           const users = db.collection('users');
+
           const githubId = profile.id;
           const username = profile.username || null;
           const displayName = profile.displayName || null;
           const profileUrl = profile.profileUrl || null;
           const provider = profile.provider || 'github';
+
           const existing = await users.findOne({ githubId });
 
           if (!existing) {
@@ -58,7 +62,9 @@ const configurePassport = () => {
             }
           );
 
-          return done(null, existing);
+          // Return the updated version (optional, but nice)
+          const updated = await users.findOne({ _id: existing._id });
+          return done(null, updated);
         } catch (err) {
           return done(err, null);
         }
@@ -66,14 +72,27 @@ const configurePassport = () => {
     )
   );
 
+  // ✅ Store _id as a STRING in the session (safe + consistent)
   passport.serializeUser((user, done) => {
-    done(null, { _id: user._id, githubId: user.githubId, username: user.username });
+    done(null, {
+      _id: user._id ? user._id.toString() : null,
+      githubId: user.githubId,
+      username: user.username
+    });
   });
 
+  // ✅ Convert session _id back to ObjectId when reading from MongoDB
   passport.deserializeUser(async (sessionUser, done) => {
     try {
+      if (!sessionUser?._id || !ObjectId.isValid(sessionUser._id)) {
+        return done(null, null);
+      }
+
       const db = mongodb.getDatabase().db();
-      const user = await db.collection('users').findOne({ _id: sessionUser._id });
+      const user = await db
+        .collection('users')
+        .findOne({ _id: new ObjectId(sessionUser._id) });
+
       done(null, user || null);
     } catch (err) {
       done(err, null);
