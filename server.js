@@ -1,60 +1,84 @@
-// server.js
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongodb = require('./data/database');
-
-require('dotenv').config();
-
-const session = require('express-session');
-const passport = require('passport');
-const configurePassport = require('./config/passport');
-
 const app = express();
+const pasport = require('passport');
+const session = require('express-session');
+const GitHubStrategy = require('passport-github2').Strategy;
+const cors = require('cors');
+
 const port = process.env.PORT || 3000;
 
-// Render is behind a proxy (HTTPS terminates before Node)
-app.set('trust proxy', 1);
-
-app.use(bodyParser.json());
-
-// IMPORTANT: use a dedicated session secret (NOT your GitHub client secret)
-if (!process.env.SESSION_SECRET) {
-  console.warn(
-    '⚠️ SESSION_SECRET is not set. Set it in Render env vars for production. Using a dev fallback is insecure.'
-  );
-}
-
-app.use(
-  session({
-    name: 'sid',
-    secret: process.env.SESSION_SECRET || 'dev_secret_change_me',
+app
+  .use(bodyParser.json())
+  .use(session({
+    secret: 'secret',
     resave: false,
-    saveUninitialized: false,
-    proxy: true, // helps when behind reverse proxies
-    cookie: {
-      httpOnly: true,
-      // On Render (HTTPS) this should be true in production, or cookies may not persist reliably.
-      secure: process.env.NODE_ENV === 'production',
-      // OAuth callback is a top-level navigation; 'lax' is ideal for this.
-      sameSite: 'lax',
-      // Optional: 7 days
-      maxAge: 1000 * 60 * 60 * 24 * 7
-    }
+    saveUninitialized: true ,
+  }))
+  // This is the basic express session({...}) initialization.
+  .use(passport.initialize())
+  // init passport on every route call.
+  .use(passport.session())
+  // allow passport to use "express-session".
+  .use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept, Z-Key, Authorization"
+    );
+    res.setHeader(
+      "Access-Control-Allow-Methods",
+      "POST, GET, PUT, PATCH, OPTIONS, DELETE"
+    );
+    next();
   })
-);
+  .use(cors({ methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH'] }))
+  .use(cors({ origin: '*' }))
+  .use("/", require("./routes/index.js"));
 
-configurePassport();
-app.use(passport.initialize());
-app.use(passport.session());
+  passport.use(new GitHubStrategy({
+  clientID: process.env.GITHUB_CLIENT_ID,
+  clientSecret: process.env.GITHUB_CLIENT_SECRET,
+  callbackURL: process.env.CALLBACK_URL
+},
+function(accessToken, refreshToken, profile, done) {
+  //User.findOrCreate({ githubId: profile.id }, function (err, user) {
+    return done(null, profile);
+  //});
+}
+));
 
-app.use('/', require('./routes'));
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+  done(null, user);
+});
+
+app.get('/', (req, res) => {
+  res.send(
+    req.session.user !== undefined
+      ? `Logged in as ${req.session.user.displayName}`
+      : "Logged Out"
+  );
+});
+
+app.get('/github/callback', passport.authenticate('github', {
+  failureRedirect: '/api-docs', session: false
+}),
+(req, res) => {
+  req.session.user = req.user;
+  res.redirect('/');
+});
 
 mongodb.initDb((err) => {
   if (err) {
-    console.error(err);
+    console.log(err);
   } else {
     app.listen(port, () => {
-      console.log(`Connected to DB and listening on ${port}`);
+      console.log(`Database is listening and node Running on port ${port}`);
     });
   }
 });

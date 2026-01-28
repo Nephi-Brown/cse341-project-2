@@ -1,9 +1,10 @@
+// routes/books.js
 const express = require('express');
 const router = express.Router();
 
 const booksController = require('../controllers/books');
 const validate = require('../middleware/validate');
-const { ensureAuth } = require('../middleware/auth');
+const { isAuthenticated } = require('../middleware/authenticate');
 
 const bookRules = {
   title: 'required|string',
@@ -20,8 +21,8 @@ const bookRules = {
 router.get('/', booksController.getAll);
 router.get('/:id', booksController.getSingle);
 
-router.post('/', ensureAuth, validate(bookRules), booksController.createBook);
-router.put('/:id', ensureAuth, validate(bookRules), booksController.updateBook);
-router.delete('/:id', ensureAuth, booksController.deleteBook);
+router.post('/', isAuthenticated, validate(bookRules), booksController.createBook);
+router.put('/:id', isAuthenticated, validate(bookRules), booksController.updateBook);
+router.delete('/:id', isAuthenticated, booksController.deleteBook);
 
 module.exports = router;
