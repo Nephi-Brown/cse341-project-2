@@ -5,8 +5,8 @@ const doc = {
     title: 'Personal Library API',
     description: 'Books and Notes CRUD API'
   },
-  host: 'localhost:3000',
-  schemes: ['http', 'https']
+  host: 'se341-project-2-dkb3.onrender.com',
+  schemes: ['https']
 };
 
 const outputFile = './swagger.json';
