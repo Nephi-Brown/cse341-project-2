@@ -1,7 +1,7 @@
 {
-  "name": "cse341-project-2",
+  "name": "cse341-project-3",
   "version": "1.0.0",
-  "description": "My Seconf Project",
+  "description": "My final Project",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,21 +9,24 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Nephi-Brown/cse341-project-2.git"
+    "url": "git+https://github.com/Nephi-Brown/cse341-project-3.git"
   },
   "author": "Nephi Brown",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Nephi-Brown/cse341-project-2/issues"
+    "url": "https://github.com/Nephi-Brown/cse341-project-3/issues"
   },
-  "homepage": "https://github.com/Nephi-Brown/cse341-project-2#readme",
+  "homepage": "https://github.com/Nephi-Brown/cse341-project-3#readme",
   "dependencies": {
     "body-parser": "^2.2.2",
+    "connect-flash": "^0.1.1",
     "cors": "^2.8.6",
-    "dotenv": "^17.2.3",
+    "dotenv": "^17.2.4",
     "express": "^5.2.1",
+    "express-ejs-layouts": "^2.5.1",
     "express-session": "^1.19.0",
-    "mongodb": "^7.0.0",
+    "mongodb": "^7.1.0",
+    "nodemon": "^3.1.11",
     "passport": "^0.7.0",
     "passport-github2": "^0.1.12",
     "swagger-autogen": "^2.23.7",
